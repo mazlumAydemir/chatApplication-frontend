@@ -19,7 +19,7 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('https://localhost:7220/api/Auth/register', {
+      await axios.post('http://158.220.105.185:7220/api/Auth/register', {
         ...formData,
         roleId: parseInt(formData.roleId)
       });

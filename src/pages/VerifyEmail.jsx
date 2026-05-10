@@ -11,7 +11,7 @@ export default function VerifyEmail() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('https://localhost:7220/api/Auth/verify-email', { email, code });
+      await axios.post('http://158.220.105.185:7220/api/Auth/verify-email', { email, code });
       alert('E-posta başarıyla doğrulandı! Artık giriş yapabilirsiniz.');
       navigate('/');
     } catch (error) {

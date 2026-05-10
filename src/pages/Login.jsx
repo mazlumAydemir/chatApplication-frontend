@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import './Login.css'; // MÜKEMMEL SARI TEMA BURADAN GELECEK
 
 export default function Login() {
   const navigate = useNavigate();
@@ -13,7 +14,8 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://localhost:7220/api/Auth/login', formData);
+      // DİKKAT: Localhost yerine canlı IP adresimiz eklendi!
+      const response = await axios.post('http://158.220.105.185:7220/api/Auth/login', formData);
       const token = response.data.token;
       
       // 1. Token'ı tarayıcıya kaydet
@@ -22,18 +24,16 @@ export default function Login() {
       // 2. JWT içindeki payload (veri) kısmını çöz
       const payload = JSON.parse(atob(token.split('.')[1]));
       
-      // Hata takibi için konsola yazdırıyoruz (İstersen silebilirsin)
       console.log("Token İçeriği (Payload):", payload);
       
-      // 3. Güvenli Rol Okuma (Olası tüm isimlendirmeleri kontrol eder)
+      // 3. Güvenli Rol Okuma
       const userRole = payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] 
                     || payload["role"] 
                     || payload["Role"];
 
       console.log("Token'dan Gelen Rol Değeri:", userRole);
 
-      // 4. KESİN YÖNLENDİRME MANTIĞI (Sysadmin ve 1 Kontrolü)
-      // Eğer rol değeri 1 ise veya string olarak "Sysadmin" ise Admin paneline git
+      // 4. Yönlendirme Mantığı
       if (
         userRole == 1 || 
         userRole === "1" || 
@@ -41,10 +41,10 @@ export default function Login() {
         (typeof userRole === 'string' && userRole.toLowerCase() === "admin")
       ) {
         alert('Yönetici (Sysadmin) girişi başarılı!');
-        navigate('/admin'); // Yönetici paneline yönlendir
+        navigate('/admin'); 
       } else {
         alert('Giriş başarılı!');
-        navigate('/chat');  // Normal sohbet sayfasına yönlendir
+        navigate('/chat');  
       }
 
     } catch (error) {

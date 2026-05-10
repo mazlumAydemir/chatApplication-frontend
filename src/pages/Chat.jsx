@@ -12,7 +12,7 @@ const EncryptedImage = ({ fileUrl, sessionKey, onClick, onLoaded }) => {
   useEffect(() => {
     const fetchAndDecrypt = async () => {
       try {
-        const response = await axios.get(`https://localhost:7220${fileUrl}`);
+        const response = await axios.get(`http://158.220.105.185:7220${fileUrl}`);
         // AES yerine DES kullanılıyor
         const decryptedBase64 = CryptoHelper.decryptTextDES(response.data, sessionKey);
         setImgSrc(decryptedBase64);
@@ -46,7 +46,7 @@ const MessageGallery = ({ urls, sessionKey, onImageClick, onLoaded }) => {
       const decryptedArr = [];
       for(let url of urls) {
          try {
-           const res = await axios.get(`https://localhost:7220${url}`);
+           const res = await axios.get(`http://158.220.105.185:7220${url}`);
            // AES yerine DES kullanılıyor
            const decryptedBase64 = CryptoHelper.decryptTextDES(res.data, sessionKey);
            decryptedArr.push(decryptedBase64);
@@ -160,7 +160,7 @@ export default function Chat() {
             myPublicKeyRef.current = pubKey;
 
             // Sunucudaki Public Key'imizi Güncelle
-            await axios.post('https://localhost:7220/api/RsaKey/upload-public-key', 
+            await axios.post('http://158.220.105.185:7220/api/RsaKey/upload-public-key', 
                 { publicKey: pubKey }, 
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -172,7 +172,7 @@ export default function Chat() {
 
     const fetchContacts = async () => {
       try {
-        const response = await axios.get('https://localhost:7220/api/Contact/list', { headers: { Authorization: `Bearer ${token}` } });
+        const response = await axios.get('http://158.220.105.185:7220/api/Contact/list', { headers: { Authorization: `Bearer ${token}` } });
         setContacts(response.data);
       } catch (error) {}
     };
@@ -191,7 +191,7 @@ export default function Chat() {
             myPrivateKeyRef.current = privKey; 
             myPublicKeyRef.current = pubKey;
             // Var olanı başlangıçta sunucuya bildir
-            await axios.post('https://localhost:7220/api/RsaKey/upload-public-key', 
+            await axios.post('http://158.220.105.185:7220/api/RsaKey/upload-public-key', 
               { publicKey: pubKey }, { headers: { Authorization: `Bearer ${token}` } }
             );
         }
@@ -203,7 +203,7 @@ export default function Chat() {
         }, 5 * 60 * 1000);
 
         const newConnection = new HubConnectionBuilder()
-          .withUrl('https://localhost:7220/chathub', { accessTokenFactory: () => token })
+          .withUrl('http://158.220.105.185:7220/chathub', { accessTokenFactory: () => token })
           .configureLogging(LogLevel.Information)
           .withAutomaticReconnect()
           .build();
@@ -216,7 +216,7 @@ export default function Chat() {
             let isSignatureValid = false;
             if (payload.signature && payload.senderId) {
                 try {
-                    const res = await axios.get(`https://localhost:7220/api/RsaKey/get-public-key/${payload.senderId}`, { headers: { Authorization: `Bearer ${token}` } });
+                    const res = await axios.get(`http://158.220.105.185:7220/api/RsaKey/get-public-key/${payload.senderId}`, { headers: { Authorization: `Bearer ${token}` } });
                     const senderPublicKey = res.data.publicKey;
                     isSignatureValid = CryptoHelper.verifySignature(payload.encryptedData, payload.signature, senderPublicKey);
                 } catch (e) { console.error("İmza doğrulanamadı", e); }
@@ -351,7 +351,7 @@ export default function Chat() {
         const container = messagesContainerRef.current;
         const previousScrollHeight = container ? container.scrollHeight : 0;
         
-        const response = await axios.get(`https://localhost:7220/api/Message/history/${targetUser.id}?skip=${currentSkip}&take=20`, { headers: { Authorization: `Bearer ${token}` } });
+        const response = await axios.get(`http://158.220.105.185:7220/api/Message/history/${targetUser.id}?skip=${currentSkip}&take=20`, { headers: { Authorization: `Bearer ${token}` } });
 
         const newMessages = response.data.map(msg => {
             const isMe = msg.senderId === myUserIdRef.current;
@@ -385,9 +385,9 @@ export default function Chat() {
   const handleAddContact = async (e) => {
       e.preventDefault();
       try {
-          await axios.post('https://localhost:7220/api/Contact/add', { email: newContactEmail }, { headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` } });
+          await axios.post('http://158.220.105.185:7220/api/Contact/add', { email: newContactEmail }, { headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` } });
           setNewContactEmail('');
-          const response = await axios.get('https://localhost:7220/api/Contact/list', { headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` } });
+          const response = await axios.get('http://158.220.105.185:7220/api/Contact/list', { headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` } });
           setContacts(response.data);
       } catch(error) { alert("Hata!"); }
   };
@@ -436,7 +436,7 @@ export default function Chat() {
   const sendEncryptedData = async (dataString, isImage = false, customSessionKey = null) => {
       if (!selectedUser || !connection) return;
       try {
-          const response = await axios.get(`https://localhost:7220/api/RsaKey/get-public-key/${selectedUser.id}`, { headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` } });
+          const response = await axios.get(`http://158.220.105.185:7220/api/RsaKey/get-public-key/${selectedUser.id}`, { headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` } });
           const sessionKey = customSessionKey || CryptoHelper.generateSessionKey();
           
           let contentToEncrypt = dataString;
@@ -493,7 +493,7 @@ export default function Chat() {
             formData.append('file', encryptedFile); 
             
             try {
-                const uploadRes = await axios.post('https://localhost:7220/api/File/upload', formData, { headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` } });
+                const uploadRes = await axios.post('http://158.220.105.185:7220/api/File/upload', formData, { headers: { Authorization: `Bearer ${localStorage.getItem('jwtToken')}` } });
                 const finalUrl = uploadRes.data.url || uploadRes.data;
                 uploadedUrls.push(finalUrl);
             } catch (error) { console.error("Resim yükleme hatası:", error); }
@@ -663,7 +663,7 @@ export default function Chat() {
                 style={{ padding: '15px 20px', cursor: 'pointer', borderBottom: '1px solid var(--bg-dark)', backgroundColor: selectedUser?.id === user.id ? 'var(--bg-input)' : 'transparent', transition: 'background 0.2s' }}
               >
                 <div style={{ position: 'relative', marginRight: '15px', flexShrink: 0 }}>
-                    <img src={user.profilePictureUrl ? `https://localhost:7220${user.profilePictureUrl}` : 'https://ui-avatars.com/api/?name=' + user.firstName + '+' + user.lastName + '&background=random'} alt="avatar" style={{ width: '45px', height: '45px', borderRadius: '50%', objectFit: 'cover' }} />
+                    <img src={user.profilePictureUrl ? `http://158.220.105.185:7220${user.profilePictureUrl}` : 'https://ui-avatars.com/api/?name=' + user.firstName + '+' + user.lastName + '&background=random'} alt="avatar" style={{ width: '45px', height: '45px', borderRadius: '50%', objectFit: 'cover' }} />
                     {user.isOnline && <div style={{ position: 'absolute', bottom: '2px', right: '2px', width: '10px', height: '10px', backgroundColor: 'var(--accent-yellow)', borderRadius: '50%', border: '2px solid var(--bg-panel)' }}></div>}
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
@@ -794,7 +794,7 @@ export default function Chat() {
                     <button className="hamburger-btn" onClick={() => setIsLeftMenuOpen(!isLeftMenuOpen)}>
                         <Menu size={28} />
                     </button>
-                    <img src={selectedUser.profilePictureUrl ? `https://localhost:7220${selectedUser.profilePictureUrl}` : 'https://ui-avatars.com/api/?name=' + selectedUser.firstName + '+' + selectedUser.lastName + '&background=random'} alt="avatar" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+                    <img src={selectedUser.profilePictureUrl ? `http://158.220.105.185:7220${selectedUser.profilePictureUrl}` : 'https://ui-avatars.com/api/?name=' + selectedUser.firstName + '+' + selectedUser.lastName + '&background=random'} alt="avatar" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
                     <div>
                         <div style={{ fontWeight: 'bold' }}>{selectedUser.firstName} {selectedUser.lastName}</div>
                         <div style={{ fontSize: '12px', color: typingUsers[selectedUser.id] ? 'var(--accent-yellow)' : (selectedUser.isOnline ? 'var(--accent-yellow)' : 'var(--text-muted)') }}>
@@ -940,7 +940,7 @@ export default function Chat() {
                     style={{ padding: '15px 20px', cursor: 'pointer', borderBottom: '1px solid var(--bg-dark)', transition: 'background 0.2s' }}
                   >
                       <div style={{ position: 'relative', flexShrink: 0, marginRight: '15px' }}>
-                          <img src={user.profilePictureUrl ? `https://localhost:7220${user.profilePictureUrl}` : 'https://ui-avatars.com/api/?name=' + user.firstName + '+' + user.lastName + '&background=random'} alt="avatar" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
+                          <img src={user.profilePictureUrl ? `http://158.220.105.185:7220${user.profilePictureUrl}` : 'https://ui-avatars.com/api/?name=' + user.firstName + '+' + user.lastName + '&background=random'} alt="avatar" style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} />
                           {user.isOnline && <div style={{ position: 'absolute', bottom: '2px', right: '2px', width: '10px', height: '10px', backgroundColor: 'var(--accent-yellow)', borderRadius: '50%', border: '2px solid var(--bg-panel)' }}></div>}
                       </div>
                       <div style={{ display: 'flex', flexDirection: 'column', overflow: 'hidden', flex: 1 }}>

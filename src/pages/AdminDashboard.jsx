@@ -25,8 +25,8 @@ export default function AdminDashboard() {
 
     try {
       const [statsRes, usersRes] = await Promise.all([
-        axios.get('https://localhost:7220/api/Admin/stats', config),
-        axios.get('https://localhost:7220/api/Admin/users', config)
+        axios.get('http://158.220.105.185:7220/api/Admin/stats', config),
+        axios.get('http://158.220.105.185:7220/api/Admin/users', config)
       ]);
       setStats(statsRes.data);
       setUsers(usersRes.data);
@@ -61,7 +61,7 @@ export default function AdminDashboard() {
   const handleToggleBan = async (userId) => {
     try {
       const config = { headers: { Authorization: `Bearer ${token}` } };
-      await axios.post(`https://localhost:7220/api/Admin/toggle-ban/${userId}`, {}, config);
+      await axios.post(`http://158.220.105.185:7220/api/Admin/toggle-ban/${userId}`, {}, config);
       loadData(false); // İşlem sonrası tabloyu sessizce yenile
     } catch (error) {
       alert("İşlem başarısız!");
