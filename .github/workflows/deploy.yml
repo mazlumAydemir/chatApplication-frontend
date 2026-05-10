@@ -15,14 +15,11 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            # 1. Kodları hatasız ve zorla GitHub'dan çek (Git Tıkanıklığı Çözümü)
             cd ~/ChatProjesi/chat-client
-            
-            # 1. GİT TIKANIKLIĞINI ÇÖZ: Sunucudaki her şeyi zorla GitHub'dakiyle aynı yap
             git fetch --all
             git reset --hard origin/main
             
+            # 2. RAM'i şişirmeden sadece değişenleri derle (Akıllı Derleme)
             cd ~/ChatProjesi
-            
-            # 2. DOCKER TEMBELLİĞİNİ ÇÖZ: Eski hafızayı (--no-cache) sil ve sıfırdan inşa et
-            DOCKER_BUILDKIT=0 sudo docker-compose build --no-cache client
-            DOCKER_BUILDKIT=0 sudo docker-compose up -d client
+            DOCKER_BUILDKIT=0 sudo docker-compose up -d --build client
