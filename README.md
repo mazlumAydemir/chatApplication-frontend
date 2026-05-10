@@ -1,4 +1,4 @@
-# IEA (Online Image Encryption Application) - Frontend Client
+# chatApplication - Frontend Client
 
 Bu depo, IEA sisteminin React / Vite tabanlı kullanıcı arayüzünü (Önyüz) içerir. 
 
