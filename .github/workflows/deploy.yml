@@ -1,0 +1,25 @@
+name: Frontend CI/CD Deploy
+
+on:
+  push:
+    branches: [ main ] # veya master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Frontend via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            # Önce Frontend klasörüne girip kodları çekiyoruz
+            cd ~/ChatProjesi/chat-client
+            git pull origin main
+            
+            # Sonra compose dosyasının olduğu ana klasöre geri dönüyoruz
+            cd ~/ChatProjesi
+            # Sadece Client (React) servisini yeniden inşa et
+            DOCKER_BUILDKIT=0 sudo docker-compose up -d --build client

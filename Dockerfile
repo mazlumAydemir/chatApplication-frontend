@@ -1,19 +1,16 @@
-# 1. Aşama: Build (Node.js kullanarak React'i derliyoruz)
-FROM node:20-alpine as build
+# Node.js'in hafif bir sürümünü kullan
+FROM node:20-alpine
 WORKDIR /app
 
-# Paketleri yükle
+# Önce paket dosyalarını kopyala ve kur (npm install)
 COPY package*.json ./
 RUN npm install
 
-# Tüm kodları kopyala ve derle
-COPY . ./
-RUN npm run build
+# Kalan tüm React kodlarını kopyala
+COPY . .
 
-# 2. Aşama: Çalıştırma (Nginx ile hızlı sunum)
-FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html 
-# NOT: Eğer Vite kullanıyorsan klasör adı 'dist' olur. Create React App kullanıyorsan 'build' yapmalısın.
+# Vite'in standart portunu aç
+EXPOSE 5173
 
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# Projeyi dışa açık şekilde başlat
+CMD ["npm", "run", "dev", "--", "--host"]

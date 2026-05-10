@@ -5,8 +5,7 @@ import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { CryptoHelper } from '../utils/crypto';
 import { Settings as SettingsIcon, LogOut, UserPlus, Image as ImageIcon, ArrowUp, Loader2, Video, PhoneCall, Phone, PhoneOff, X, ChevronLeft, ChevronRight, CheckCheck, Menu, Users } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion'; 
-import './Chat.css';
-
+import "./chat.css";
 // --- ŞİFRELİ TEKLİ RESİM BİLEŞENİ ---
 const EncryptedImage = ({ fileUrl, sessionKey, onClick, onLoaded }) => {
   const [imgSrc, setImgSrc] = useState(null);
