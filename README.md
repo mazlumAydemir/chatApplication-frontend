@@ -1,16 +1,28 @@
-# React + Vite
+# IEA (Online Image Encryption Application) - Frontend Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Bu depo, IEA sisteminin React / Vite tabanlı kullanıcı arayüzünü (Önyüz) içerir. 
 
-Currently, two official plugins are available:
+⚠️ **ÖNEMLİ NOT:** Tüm projeyi (Veritabanı, Backend, Redis ve bu arayüzü) tek tuşla çalıştırmak için lütfen **Ana Backend Reposundaki Docker talimatlarını** okuyun
+Backend Reposu:https://github.com/mazlumAydemir/chatApplication-backend/
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 💻 Geliştiriciler İçin Sadece Arayüzü Çalıştırma
 
-## React Compiler
+Eğer Docker kullanmadan sadece React projesini yerelinizde çalıştırmak isterseniz:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. Bilgisayarınızda Node.js yüklü olduğundan emin olun.
+2. Terminalde proje klasörüne gidin ve paketleri yükleyin:
+   ```bash
+   npm install
+Projeyi başlatın:
 
-## Expanding the ESLint configuration
+Bash
+npm run dev
+Uygulama http://localhost:5173 adresinde çalışacaktır. (Bağlantıların sağlanması için Backend API'nin de çalışıyor olması gerekir).
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+
+### Nasıl Yükleyeceksin?
+Dosyaları kendi klasörlerine oluşturduktan sonra, her iki terminalde de ayrı ayrı şu standart Git komutlarını girerek değişiklikleri GitHub'a gönderebilirsin:
+```bash
+git add README.md
+git commit -m "docs: README eklendi"
+git push
