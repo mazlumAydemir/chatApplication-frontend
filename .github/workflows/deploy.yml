@@ -2,7 +2,7 @@ name: Frontend CI/CD Deploy
 
 on:
   push:
-    branches: [ main ] # veya master
+    branches: [ main ]
 
 jobs:
   deploy:
@@ -15,11 +15,14 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            # Önce Frontend klasörüne girip kodları çekiyoruz
             cd ~/ChatProjesi/chat-client
-            git pull origin main
             
-            # Sonra compose dosyasının olduğu ana klasöre geri dönüyoruz
+            # 1. GİT TIKANIKLIĞINI ÇÖZ: Sunucudaki her şeyi zorla GitHub'dakiyle aynı yap
+            git fetch --all
+            git reset --hard origin/main
+            
             cd ~/ChatProjesi
-            # Sadece Client (React) servisini yeniden inşa et
-            DOCKER_BUILDKIT=0 sudo docker-compose up -d --build client
+            
+            # 2. DOCKER TEMBELLİĞİNİ ÇÖZ: Eski hafızayı (--no-cache) sil ve sıfırdan inşa et
+            DOCKER_BUILDKIT=0 sudo docker-compose build --no-cache client
+            DOCKER_BUILDKIT=0 sudo docker-compose up -d client
