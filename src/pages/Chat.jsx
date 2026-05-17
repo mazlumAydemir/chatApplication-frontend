@@ -6,6 +6,7 @@ import { CryptoHelper } from '../utils/crypto';
 import { Settings as SettingsIcon, LogOut, UserPlus, Image as ImageIcon, ArrowUp, Loader2, Video, PhoneCall, Phone, PhoneOff, X, ChevronLeft, ChevronRight, CheckCheck, Menu, Users } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion'; 
 import "./chat.css";
+
 // --- ŞİFRELİ TEKLİ RESİM BİLEŞENİ ---
 const EncryptedImage = ({ fileUrl, sessionKey, onClick, onLoaded }) => {
   const [imgSrc, setImgSrc] = useState(null);
@@ -806,7 +807,7 @@ export default function Chat() {
                 <div style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
                     <button onClick={() => initiateCall(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent-yellow)' }} title="Sesli Ara"><Phone size={22} /></button>
                     <button onClick={() => initiateCall(true)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--accent-yellow)' }} title="Görüntülü Ara"><Video size={24} /></button>
-                    <button className="contacts-btn" onClick={() => setIsRightMenuOpen(!isRightMenuOpen)}>
+                    <button className="contacts-btn mobile-only-btn" onClick={() => setIsRightMenuOpen(!isRightMenuOpen)}>
                         <Users size={24} />
                     </button>
                 </div>
@@ -906,8 +907,14 @@ export default function Chat() {
           </>
         ) : (
           <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'var(--text-muted)', fontSize: '18px', flexDirection: 'column', gap: '15px', position: 'relative' }}>
-             <button className="hamburger-btn" onClick={() => setIsLeftMenuOpen(true)} style={{ position: 'absolute', top: '20px', left: '20px' }}>
+             {/* SOL ÜST: Önceki Sohbetler Butonu */}
+             <button className="hamburger-btn" onClick={() => setIsLeftMenuOpen(true)} style={{ position: 'absolute', top: '20px', left: '20px', background: 'none', border: 'none', color: 'var(--text-main)', cursor: 'pointer' }}>
                  <Menu size={32} />
+             </button>
+
+             {/* EKLENEN KISIM: SAĞ ÜST: Rehber Butonu */}
+             <button className="contacts-btn mobile-only-btn" onClick={() => setIsRightMenuOpen(true)} style={{ position: 'absolute', top: '20px', right: '20px', background: 'none', border: 'none', color: 'var(--accent-yellow)', cursor: 'pointer' }}>
+                 <Users size={32} />
              </button>
              
              <div style={{ padding: '20px', backgroundColor: 'var(--bg-panel)', borderRadius: '50%' }}>
