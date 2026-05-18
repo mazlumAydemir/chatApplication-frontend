@@ -14,7 +14,7 @@ const EncryptedImage = ({ fileUrl, sessionKey, onClick, onLoaded }) => {
     const fetchAndDecrypt = async () => {
       try {
         // Sunucudan şifreli .enc dosyasını çekiyoruz
-        const response = await axios.get(`http://158.220.105.185:7220${fileUrl}`, { responseType: 'arraybuffer' });
+        const response = await axios.get(`https://chat.mazlumaydemir.online:7220${fileUrl}`, { responseType: 'arraybuffer' });
         // DES şifreli binary veriyi, RSA ile çözülmüş sessionKey ile deşifre ediyoruz
         const decryptedBase64 = CryptoHelper.decryptFileDES(response.data, sessionKey);
         setImgSrc(decryptedBase64);
@@ -92,7 +92,7 @@ export default function Chat() {
             myPublicKeyRef.current = keys.publicKey;
 
             // Yenilenen Public Key backend'e basılır
-            await axios.put('http://158.220.105.185:7220/api/Auth/update-public-key', 
+            await axios.put('https://chat.mazlumaydemir.online:7220/api/Auth/update-public-key', 
                 keys.publicKey, 
                 { headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' } }
             );
@@ -110,7 +110,7 @@ export default function Chat() {
 
         // Rehber listesini backend'den çekiyoruz
         try {
-            const res = await axios.get('http://158.220.105.185:7220/api/Contact/list', { headers: { Authorization: `Bearer ${token}` } });
+            const res = await axios.get('https://chat.mazlumaydemir.online:7220/api/Contact/list', { headers: { Authorization: `Bearer ${token}` } });
             setContacts(res.data);
         } catch (e) { console.error("Rehber yüklenemedi", e); }
     };
@@ -118,7 +118,7 @@ export default function Chat() {
     // Hub ve Bağlantı Yönetimi
     const startSignalR = async () => {
         const newConnection = new HubConnectionBuilder()
-          .withUrl('http://158.220.105.185:7220/chathub', { accessTokenFactory: () => token })
+          .withUrl('https://chat.mazlumaydemir.online:7220/chathub', { accessTokenFactory: () => token })
           .withAutomaticReconnect()
           .configureLogging(LogLevel.Information)
           .build();
@@ -177,7 +177,7 @@ export default function Chat() {
     const fetchHistory = async () => {
         try {
             const token = localStorage.getItem('jwtToken');
-            const res = await axios.get(`http://158.220.105.185:7220/api/Message/history/${selectedUser.contactId}`, { headers: { Authorization: `Bearer ${token}` } });
+            const res = await axios.get(`https://chat.mazlumaydemir.online:7220/api/Message/history/${selectedUser.contactId}`, { headers: { Authorization: `Bearer ${token}` } });
             
             // Gelen geçmiş verilerindeki asimetrik şifreleri tek tek çözüyoruz
             const decryptedHistory = res.data.map(msg => {
@@ -203,9 +203,9 @@ export default function Chat() {
       if (!newContactPhone.trim()) return;
       try {
           const token = localStorage.getItem('jwtToken');
-          await axios.post('http://158.220.105.185:7220/api/Contact/add', { phoneNumber: newContactPhone }, { headers: { Authorization: `Bearer ${token}` } });
+          await axios.post('https://chat.mazlumaydemir.online:7220/api/Contact/add', { phoneNumber: newContactPhone }, { headers: { Authorization: `Bearer ${token}` } });
           setNewContactPhone('');
-          const res = await axios.get('http://158.220.105.185:7220/api/Contact/list', { headers: { Authorization: `Bearer={token}` } });
+          const res = await axios.get('https://chat.mazlumaydemir.online:7220/api/Contact/list', { headers: { Authorization: `Bearer={token}` } });
           setContacts(res.data);
           alert("Kişi rehbere başarıyla eklendi.");
       } catch (err) { alert(err.response?.data?.message || "Kullanıcı bulunamadı."); }
@@ -245,7 +245,7 @@ export default function Chat() {
               uploadFormData.append('file', encryptedFile);
 
               // Az önce yazdığımız ImageController.cs'e yükleme yapıyoruz
-              const uploadRes = await axios.post('http://158.220.105.185:7220/api/Image/upload', uploadFormData, {
+              const uploadRes = await axios.post('https://chat.mazlumaydemir.online:7220/api/Image/upload', uploadFormData, {
                   headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
               });
               finalImageUrl = uploadRes.data.encryptedImageUrl;

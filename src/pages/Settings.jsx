@@ -13,7 +13,7 @@ export default function Settings() {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem('jwtToken');
-        const res = await axios.get('http://158.220.105.185:7220/api/Profile', {
+        const res = await axios.get('https://chat.mazlumaydemir.online:7220/api/Profile', {
           headers: { Authorization: `Bearer ${token}` }
         });
         setUser({
@@ -41,7 +41,7 @@ export default function Settings() {
     
     try {
       const token = localStorage.getItem('jwtToken');
-      const res = await axios.post('http://158.220.105.185:7220/api/File/upload-avatar', formData, {
+      const res = await axios.post('https://chat.mazlumaydemir.online:7220/api/File/upload-avatar', formData, {
         headers: { 'Content-Type': 'multipart/form-data', Authorization: `Bearer ${token}` }
       });
       alert("Profil fotoğrafı güncellendi!");
@@ -53,7 +53,7 @@ export default function Settings() {
   const handleUpdateProfile = async () => {
     try {
       const token = localStorage.getItem('jwtToken');
-      await axios.put('http://158.220.105.185:7220/api/Profile', user, {
+      await axios.put('https://chat.mazlumaydemir.online:7220/api/Profile', user, {
         headers: { Authorization: `Bearer ${token}` }
       });
       alert("Profil bilgileri başarıyla kaydedildi!");
@@ -77,7 +77,7 @@ export default function Settings() {
         {/* Resmi ve İkonu Saran Özel Kutu (inline-block sayesinde resmin boyutunu alır) */}
         <div style={{ display: 'inline-block', position: 'relative' }}>
           <img 
-            src={user.profilePictureUrl ? `http://158.220.105.185:7220${user.profilePictureUrl}` : 'https://ui-avatars.com/api/?name=' + user.firstName + '+' + user.lastName + '&background=random'} 
+            src={user.profilePictureUrl ? `https://chat.mazlumaydemir.online:7220${user.profilePictureUrl}` : 'https://ui-avatars.com/api/?name=' + user.firstName + '+' + user.lastName + '&background=random'} 
             style={{ width: '150px', height: '150px', borderRadius: '50%', objectFit: 'cover', border: '4px solid #00a884' }}
             alt="Avatar"
           />

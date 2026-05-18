@@ -19,7 +19,7 @@ export default function Login() {
     e.preventDefault();
     try {
       // Kendi API adresinize göre endpoint'i tetikliyoruz
-      const response = await axios.post('http://158.220.105.185:7220/api/Auth/login', formData);
+      const response = await axios.post('https://chat.mazlumaydemir.online:7220/api/Auth/login', formData);
       const token = response.data.token;
       
       if (!token) throw new Error("Giriş başarısız: Token üretilemedi.");
