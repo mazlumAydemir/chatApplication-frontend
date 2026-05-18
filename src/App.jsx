@@ -3,57 +3,99 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Chat from './pages/Chat';
 import Settings from './pages/Settings';
-import VerifyEmail from './pages/VerifyEmail';
 import AdminDashboard from './pages/AdminDashboard';
 
+// ========================================================
+// 1. KORUMALI ROTA BİLEŞENİ (Giriş Yapmayanları Kesin Engeller)
+// ========================================================
+const ProtectedRoute = ({ children }) => {
+  const token = localStorage.getItem('jwtToken');
+  
+  // Eğer token yoksa, kullanıcıyı anında giriş sayfasına ("/") fırlatır
+  if (!token) {
+    return <Navigate to="/" replace />;
+  }
+  
+  // Token varsa sayfayı güvenle açar
+  return children;
+};
+
+// ========================================================
+// 2. ADMİN KORUMALI ROTA BİLEŞENİ (Sadece Adminleri İçeri Alır)
+// ========================================================
+const AdminRoute = ({ children }) => {
+  const token = localStorage.getItem('jwtToken');
+  
+  if (!token) {
+    return <Navigate to="/" replace />;
+  }
+
+  try {
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const userRole = payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] 
+                  || payload["role"] 
+                  || payload["Role"];
+    
+    const isAdmin = userRole == 1 || 
+                    userRole === "1" || 
+                    (typeof userRole === 'string' && userRole.toLowerCase() === "sysadmin") ||
+                    (typeof userRole === 'string' && userRole.toLowerCase() === "admin");
+
+    // Giriş yapmış ama admin değilse chat sayfasına postala
+    if (!isAdmin) {
+      return <Navigate to="/chat" replace />;
+    }
+  } catch {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+};
+
+// ========================================================
+// MAIN APP COMPONENT
+// ========================================================
 function App() {
   const isAuthenticated = () => !!localStorage.getItem('jwtToken');
-  
-  // GÜNCELLENMİŞ ROL KONTROLÜ (Sysadmin ve 1 mantığına tam uyumlu)
-  const isAdmin = () => {
-    const token = localStorage.getItem('jwtToken');
-    if (!token) return false;
-    
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      
-      // Olası tüm anahtarları (key) kontrol et
-      const userRole = payload["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"] 
-                    || payload["role"] 
-                    || payload["Role"];
-      
-      // Eğer rol 1 ise, "Sysadmin" ise veya "Admin" ise TRUE dön, onu içeri al!
-      return userRole == 1 || 
-             userRole === "1" || 
-             (typeof userRole === 'string' && userRole.toLowerCase() === "sysadmin") ||
-             (typeof userRole === 'string' && userRole.toLowerCase() === "admin");
-    } catch { 
-      return false; 
-    }
-  };
 
   return (
     <Router>
       <Routes>
+        {/* Herkese Açık Rotalar */}
         <Route path="/" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/verify-email" element={<VerifyEmail />} />
         
+        {/* Giriş Şartı Olan Korumalı Rotalar (ProtectedRoute ile Sarmalandı) */}
         <Route 
           path="/chat" 
-          element={isAuthenticated() ? <Chat /> : <Navigate to="/" />} 
+          element={
+            <ProtectedRoute>
+              <Chat />
+            </ProtectedRoute>
+          } 
         />
         
         <Route 
           path="/settings" 
-          element={isAuthenticated() ? <Settings /> : <Navigate to="/" />} 
+          element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          } 
         />
 
-        {/* ADMİN PANELİ YÖNLENDİRMESİ */}
+        {/* Sadece Adminlerin Girebileceği Rota (AdminRoute ile Sarmalandı) */}
         <Route 
           path="/admin" 
-          element={isAuthenticated() && isAdmin() ? <AdminDashboard /> : <Navigate to="/chat" />} 
+          element={
+            <AdminRoute>
+              <AdminDashboard />
+            </AdminRoute>
+          } 
         />
+
+        {/* Tanımlanmayan Eksik Rotalarda Otomatik Yönlendirme */}
+        <Route path="*" element={<Navigate to={isAuthenticated() ? "/chat" : "/"} replace />} />
       </Routes>
     </Router>
   );
