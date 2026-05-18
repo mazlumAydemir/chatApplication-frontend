@@ -58,7 +58,7 @@ export default function Register() {
       };
 
       // Kendi API adresine veya localhost portuna göre güncelleyebilirsin
-      await axios.post('http://localhost:7220/api/Auth/register', requestData);
+      await axios.post('http://158.220.105.185:7220/api/Auth/register', requestData);
       
       alert('Kayıt başarılı ve güvenli RSA anahtarlarınız üretildi! Şimdi giriş yapabilirsiniz.');
       navigate('/'); // Giriş sayfasına yönlendirme

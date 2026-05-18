@@ -22,7 +22,7 @@ export default function AdminDashboard() {
 
     try {
       // Katmanlı mimarideki AdminController.cs /monitoring ucunu tetikliyoruz
-      const response = await axios.get('http://localhost:7220/api/Admin/monitoring', config);
+      const response = await axios.get('http://158.220.105.185:7220/api/Admin/monitoring', config);
       setStats(response.data);
     } catch (error) {
       console.error("Yönetim Paneli Hatası:", error.response);
