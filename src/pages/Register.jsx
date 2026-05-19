@@ -58,7 +58,8 @@ export default function Register() {
       };
 
       // Kendi API adresine veya localhost portuna göre güncelleyebilirsin
-      await axios.post('https://chat.mazlumaydemir.online:7220/api/Auth/register', requestData);
+      await axios.post('https://chat.mazlumaydemir.online/chat-backend/api/Auth/register', requestData);
+     
       
       alert('Kayıt başarılı ve güvenli RSA anahtarlarınız üretildi! Şimdi giriş yapabilirsiniz.');
       navigate('/'); // Giriş sayfasına yönlendirme
